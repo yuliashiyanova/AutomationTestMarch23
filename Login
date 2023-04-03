@@ -1,1 +1,157 @@
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.chrome.ChromeDriver;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
+	@DisplayName("Test Scenario - Login")
+	public class Login_Functionality {
+
+		//Declaration of the object webdriver
+		public static WebDriver driver = null;
+		public static String userID = "mngr484128";
+
+		public static int count = 1;
+
+		@BeforeAll
+		public static void beforeALL() {
+	
+		WebDriverManager.chromedriver().setup();
+
+		//Initialize our virtual Browser
+		TestData.driver = new ChromeDriver();
+		
+		}
+	@BeforeEach
+	 public void beforeEach() {
+		
+	}
+
+	 @AfterAll
+	 public static void afterAll() {
+		//driver.quit(); 
+		//TestData.driver.quit(); 
+		//driver.close();
+		}
+
+	public static void afterEach() {
+		
+	}
+		@Test
+		@Order(1)
+		@DisplayName("Check results on entering valid User Id & Password.")	
+		public void tc001() throws InterruptedException {	
+
+			//---------------------------
+			//Test Steps ----------------
+			//---------------------------
+
+			//Open the website
+			TestData.driver.get("https://demo.guru99.com/v4/index.php");
+			Thread.sleep(4000);
+			TestData.driver.manage().window().maximize();
+
+			//Close the iframe - Privacy Police
+			if (count==1) {
+				System.out.println("it is here - TC001");
+				TestData.driver.switchTo().frame("gdpr-consent-notice").findElement(By.id("save")).click();
+				count--;
+				Thread.sleep(4000);
+			} 
+
+			//Enter UserID
+			TestData.driver.findElement(By.name("uid")).sendKeys(TestData.userID_Manager);
+
+			//Enter Password
+			TestData.driver.findElement(By.name("password")).sendKeys(TestData.password_Manager);
+
+			//Click on Submit
+			TestData.driver.findElement(By.name("btnLogin")).click();
+
+
+			//----------------------------------------------
+			//Expected Results: Check the welcome message
+			//----------------------------------------------
+
+			String expectedResults = "Welcome To Manager's Page of Guru99 Bank";
+			String actualResults = TestData.driver.findElement(By.cssSelector("body > table > tbody > tr > td > table > tbody > tr:nth-child(2) > td > marquee")).getText();
+
+			assertEquals(expectedResults,actualResults);
+
+			System.out.println("TC001 - Test Passed!");
+
+			//Take Screenshot
+			//DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			//LocalDateTime now = LocalDateTime.now();
+			//System.out.println(dtf.format(now));
+		//	File shot = ((TakesScreenshot)TestData.driver).getScreenshotAs(OutputType.FILE);
+			//FileUtils.copyFile(shot, new File("/Users/camillenogueira/Downloads/loginTC001"+dtf.format(now)+".jpg"));
+			
+		}
+   @Test
+   @DisplayName("Check response when a User ID is Empty & Login Button is pressed")
+	public void tc002() throws InterruptedException {
+			//Test Steps
+
+			//Open the URL GURU99
+	   
+		TestData.driver.get("https://demo.guru99.com/v4/index.php");
+		Thread.sleep(4000);
+
+		//Close the iframe - Privacy Police
+		if (count==1) {
+			System.out.println("it is here - TC001");
+			TestData.driver.switchTo().frame("gdpr-consent-notice").findElement(By.id("save")).click();
+			count--;
+			Thread.sleep(4000);
+		} 
+		//Leave UserID and password empty
+		//Click on Submit
+		TestData.driver.findElement(By.name("btnLogin")).click();
+		Thread.sleep(4000);
+		
+		//Check Results	
+		String expectedResults = "User or Password is not valid";
+		String actualResults = TestData.driver.switchTo().alert().getText();
+
+		//System.out.println(actualResults);
+
+		assertEquals(expectedResults,actualResults);
+		//assertTrue(actualResults.equals(expectedResults));
+		TestData.driver.switchTo().alert().accept();
+
+		System.out.println("TC002 - Test Passed!");
+
+		}
+
+		@Test
+		@Order(3)
+		@DisplayName("Check results after click on reset button")
+		public void tc003() throws InterruptedException {
+
+		//Open the URL GURU99
+		TestData.driver.get("https://demo.guru99.com/v4/index.php");
+		Thread.sleep(4000);
+
+		//Close the iframe - Privacy Police
+		if (count==1) {
+			System.out.println("it is here - TC003");
+			TestData.driver.switchTo().frame("gdpr-consent-notice").findElement(By.id("save")).click();
+			count--;
+		Thread.sleep(4000);
+			}
+
+			boolean checkEmpty = TestData.driver.findElement(By.name("uid")).getText().isBlank();
+
+			assertTrue(checkEmpty);
+
+		}
+
+		}
